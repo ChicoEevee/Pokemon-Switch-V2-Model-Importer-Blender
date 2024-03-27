@@ -2410,7 +2410,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh):
                                             uv4_layer.data[loop_idx].uv = uv4_array[vert_idx]
 
                                 #normals
-                                new_object.data.use_auto_smooth = True
+                                #new_object.data.use_auto_smooth = True
                                 new_object.data.normals_split_custom_set_from_vertices(normal_array)
                                 # add object to scene collection
                                 new_collection.objects.link(new_object)
