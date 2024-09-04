@@ -32,6 +32,7 @@ import math
 import glob
 import shutil
 import sys
+import numpy as np
 
 
 # READ THIS: change to True when running in Blender, False when running using fake-bpy-module-latest
@@ -197,11 +198,13 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 elif chara_check.startswith(('cm_')): chara_check = "CommonNPC"
                 elif chara_check.startswith(('df_')): chara_check = "CommonNPC"
                 elif chara_check.startswith(('dm_')): chara_check = "CommonNPC"
-                elif chara_check.startswith(('p1_')): chara_check = "Rei"
-                elif chara_check.startswith(('p2_')): chara_check = "Akari"
+                elif chara_check.startswith(('p1_drs')): chara_check = "SVProtag"
+                elif chara_check.startswith(('p2_drs')): chara_check = "SVProtag"
                 elif chara_check.startswith(('pm')): chara_check = "Pokemon"
+                elif chara_check.startswith(('p0')): chara_check = "SVProtag"
                 else: chara_check = "None"
-
+                if chara_check == "SVProtag" and trskl is None:
+                    trskl = open(os.path.join(filep, "../../model_pc_base/model/p0_base.trskl"), "rb")
                 trmsh_name = readfixedstring(trmdl, trmsh_name_len)
                 print(trmsh_name)
                 print(chara_check)
@@ -289,7 +292,13 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
             fseek(trskl, trskl_file_start + trskl_struct_bone)
             trskl_bone_start = ftell(trskl) + readlong(trskl); fseek(trskl, trskl_bone_start)
             bone_count = readlong(trskl)
-
+            print(bone_count)
+            print(bone_count)
+            print(bone_count)
+            print(bone_count)
+            print(bone_count)
+            print(bone_count)
+            
             if IN_BLENDER_ENV:
                 new_armature = bpy.data.armatures.new(os.path.basename(trmdl.name))
                 bone_structure = bpy.data.objects.new(os.path.basename(trmdl.name), new_armature)
@@ -347,79 +356,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                         print(f"BoneMerge to {bone_merge_string}")
                     else: bone_merge_string = ""
 
-                if chara_check == "Rei" or chara_check == "Akari":
-                    bone_array.append("foot_base")
-                    bone_array.append("waist")
-                    bone_array.append("spine_01")
-                    bone_array.append("spine_02")
-                    bone_array.append("spine_03")
-                    bone_array.append("neck")
-                    bone_array.append("look")
-                    bone_array.append("head")
-                    bone_array.append("left_shoulder")
-                    bone_array.append("left_arm_width")
-                    bone_array.append("left_arm_01")
-                    bone_array.append("left_arm_02")
-                    bone_array.append("left_hand")
-                    bone_array.append("left_thumb_01")
-                    bone_array.append("left_thumb_02")
-                    bone_array.append("left_thumb_03")
-                    bone_array.append("left_index_01")
-                    bone_array.append("left_index_02")
-                    bone_array.append("left_index_03")
-                    bone_array.append("left_middle_01")
-                    bone_array.append("left_middle_02")
-                    bone_array.append("left_middle_03")
-                    bone_array.append("left_ring_01")
-                    bone_array.append("left_ring_02")
-                    bone_array.append("left_ring_03")
-                    bone_array.append("left_pinky_01")
-                    bone_array.append("left_pinky_02")
-                    bone_array.append("left_pinky_03")
-                    bone_array.append("left_attach_off")
-                    bone_array.append("left_attach_on")
-                    bone_array.append("left_hand_roll")
-                    bone_array.append("left_arm_02_sub")
-                    bone_array.append("left_arm_02_roll")
-                    bone_array.append("left_arm_01_roll")
-                    bone_array.append("right_shoulder")
-                    bone_array.append("right_arm_width")
-                    bone_array.append("right_arm_01")
-                    bone_array.append("right_arm_02")
-                    bone_array.append("right_hand")
-                    bone_array.append("right_thumb_01")
-                    bone_array.append("right_thumb_02")
-                    bone_array.append("right_thumb_03")
-                    bone_array.append("right_index_01")
-                    bone_array.append("right_index_02")
-                    bone_array.append("right_index_03")
-                    bone_array.append("right_middle_01")
-                    bone_array.append("right_middle_02")
-                    bone_array.append("right_middle_03")
-                    bone_array.append("right_ring_01")
-                    bone_array.append("right_ring_02")
-                    bone_array.append("right_ring_03")
-                    bone_array.append("right_pinky_01")
-                    bone_array.append("right_pinky_02")
-                    bone_array.append("right_pinky_03")
-                    bone_array.append("right_attach_off")
-                    bone_array.append("right_attach_on")
-                    bone_array.append("right_hand_roll")
-                    bone_array.append("right_arm_02_sub")
-                    bone_array.append("right_arm_02_roll")
-                    bone_array.append("right_arm_01_roll")
-                    bone_array.append("hips")
-                    bone_array.append("leg_width")
-                    bone_array.append("left_leg_01")
-                    bone_array.append("left_leg_02")
-                    bone_array.append("left_foot")
-                    bone_array.append("left_toe")
-                    bone_array.append("left_leg_02_sub")
-                    bone_array.append("right_leg_01")
-                    bone_array.append("right_leg_02")
-                    bone_array.append("right_foot")
-                    bone_array.append("right_toe")
-                    bone_array.append("right_leg_02_sub")
+
 
                 if trskl_bone_struct_ptr_bone != 0:
                     fseek(trskl, bone_offset + trskl_bone_struct_ptr_bone)
@@ -437,8 +374,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
 
                     fseek(trskl, bone_pos_start + bone_pos_struct_ptr_trs)
                     bone_tx = readfloat(trskl); bone_ty = readfloat(trskl); bone_tz = readfloat(trskl)
-                    # TODO ArceusScale
-                    # LINE 1797
                     fseek(trskl, bone_pos_start + bone_pos_struct_ptr_rot)
                     bone_rx = readfloat(trskl); bone_ry = readfloat(trskl); bone_rz = readfloat(trskl)
                     fseek(trskl, bone_pos_start + bone_pos_struct_ptr_scl)
@@ -469,7 +404,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
 
                     if IN_BLENDER_ENV:
                         new_bone = new_armature.edit_bones.new(bone_name)
-
                         new_bone.use_connect = False
                         new_bone.use_inherit_rotation = True
                         if blender_version[0] == 4:
@@ -483,7 +417,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                 new_bone.use_inherit_scale = False
                         
                         new_bone.use_local_location = True
-
                         new_bone.head = (0, 0, 0)
                         new_bone.tail = (0, 0, 0.1)
                         new_bone.matrix = bone_matrix
@@ -499,11 +432,20 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                             bone_id_map[len(bone_rig_array) - 1] = bone_name
                         
                         bone_array.append(new_bone)
+                
                 fseek(trskl, bone_ret)
+        
         fclose(trskl)
         if IN_BLENDER_ENV:
             bpy.ops.object.editmode_toggle()
-    
+    print(bone_array)
+    print(bone_array)
+    print(bone_array)
+    print(bone_array)
+    print(bone_array)
+    print(bone_array)
+    print(bone_array)
+    print(bone_array)
     if trmtr is not None:
         print("Parsing TRMTR...")
         trmtr_file_start = readlong(trmtr)
@@ -527,16 +469,16 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 mat_uv_scale_u = 1.0; mat_uv_scale_v = 1.0; mat_uv_trs_u = 0; mat_uv_trs_v = 0
                 mat_uv_scale2_u = 1.0; mat_uv_scale2_v = 1.0; mat_uv_trs2_u = 0; mat_uv_trs2_v = 0
                 mat_color_r = 1.0; mat_color_g = 1.0; mat_color_b = 1.0
-                mat_color1_r = 1.0; mat_color1_g = 1.0; mat_color1_b = 1.0
-                mat_color2_r = 1.0; mat_color2_g = 1.0; mat_color2_b = 1.0
-                mat_color3_r = 1.0; mat_color3_g = 1.0; mat_color3_b = 1.0
-                mat_color4_r = 1.0; mat_color4_g = 1.0; mat_color4_b = 1.0
+                mat_color1_r = 0.0; mat_color1_g = 0.0; mat_color1_b = 0.0
+                mat_color2_r = 0.0; mat_color2_g = 0.0; mat_color2_b = 0.0
+                mat_color3_r = 0.0; mat_color3_g = 0.0; mat_color3_b = 0.0
+                mat_color4_r = 12312312.0; mat_color4_g = 12312312.0; mat_color4_b = 12312312.0
 
-                mat_emcolor1_r = 1.0; mat_emcolor1_g = 1.0; mat_emcolor1_b = 1.0
-                mat_emcolor2_r = 1.0; mat_emcolor2_g = 1.0; mat_emcolor2_b = 1.0
-                mat_emcolor3_r = 1.0; mat_emcolor3_g = 1.0; mat_emcolor3_b = 1.0
-                mat_emcolor4_r = 1.0; mat_emcolor4_g = 1.0; mat_emcolor4_b = 1.0
-                mat_emcolor5_r = 1.0; mat_emcolor5_g = 1.0; mat_emcolor5_b = 1.0                
+                mat_emcolor1_r = 0.0; mat_emcolor1_g = 0.0; mat_emcolor1_b = 0.0
+                mat_emcolor2_r = 0.0; mat_emcolor2_g = 0.0; mat_emcolor2_b = 0.0
+                mat_emcolor3_r = 0.0; mat_emcolor3_g = 0.0; mat_emcolor3_b = 0.0
+                mat_emcolor4_r = 0.0; mat_emcolor4_g = 0.0; mat_emcolor4_b = 0.0
+                mat_emcolor5_r = 0.0; mat_emcolor5_g = 0.0; mat_emcolor5_b = 0.0                
                 mat_rgh_layer0 = 1.0; mat_rgh_layer1 = 1.0; mat_rgh_layer2 = 1.0; mat_rgh_layer3 = 1.0; mat_rgh_layer4 = 1.0
                 mat_mtl_layer0 = 0.0; mat_mtl_layer1 = 0.0; mat_mtl_layer2 = 0.0; mat_mtl_layer3 = 0.0; mat_mtl_layer4 = 0.0
                 mat_reflectance = 0.0
@@ -552,7 +494,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 mat_enable_metallic_map = False
                 mat_enable_displacement_map = False
                 mat_enable_highlight_map = False
-
+                mat_num_material_layer = 0
                 fseek(trmtr, mat_offset)
                 print("--------------------")
                 mat_struct = ftell(trmtr) - readlong(trmtr); fseek(trmtr, mat_struct)
@@ -646,6 +588,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                 if mat_param_b_sub_string == "EnableDisplacementMap": mat_enable_displacement_map = mat_param_b_sub_value == "True"
                                 if mat_param_b_sub_string == "EnableHighlight": mat_enable_highlight_map = mat_param_b_sub_value == "True"
                                 if mat_param_b_sub_string == "EnableOverrideColor": mat_enable_override_color = mat_param_b_sub_value == "True"
+                                if mat_param_b_sub_string == "NumMaterialLayer": mat_num_material_layer = int(mat_param_b_sub_value)
                                 fseek(trmtr, mat_param_b_sub_ret)
                         fseek(trmtr, mat_param_b_ret)
 
@@ -1130,7 +1073,8 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     "mat_enable_roughness_map": mat_enable_roughness_map,
                     "mat_enable_metallic_map": mat_enable_metallic_map,
                     "mat_enable_displacement_map": mat_enable_displacement_map,
-                    "mat_enable_highlight_map": mat_enable_highlight_map
+                    "mat_enable_highlight_map": mat_enable_highlight_map,
+                    "mat_num_material_layer": mat_num_material_layer
                 })
                 fseek(trmtr, mat_ret)
             print("--------------------")
@@ -1167,14 +1111,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 emcolor2 = (mat["mat_emcolor2_r"], mat["mat_emcolor2_g"], mat["mat_emcolor2_b"], 1.0)
                 emcolor3 = (mat["mat_emcolor3_r"], mat["mat_emcolor3_g"], mat["mat_emcolor3_b"], 1.0)                   
                 emcolor4 = (mat["mat_emcolor4_r"], mat["mat_emcolor4_g"], mat["mat_emcolor4_b"], 1.0)
-                if emcolor1 == (1.0, 1.0, 1.0, 1.0):
-                    emcolor1 = (0.0, 0.0, 0.0, 0.0)
-                if emcolor2 == (1.0, 1.0, 1.0, 1.0):
-                    emcolor2 = (0.0, 0.0, 0.0, 0.0)
-                if emcolor3 == (1.0, 1.0, 1.0, 1.0):
-                    emcolor3 = (0.0, 0.0, 0.0, 0.0)
-                if emcolor4 == (1.0, 1.0, 1.0, 1.0):
-                    emcolor4 = (0.0, 0.0, 0.0, 0.0)
                 shadegroupnodes.inputs['BaseColorLayer1'].default_value = color1
                 shadegroupnodes.inputs['BaseColorLayer2'].default_value = color2
                 shadegroupnodes.inputs['BaseColorLayer3'].default_value = color3
@@ -1188,14 +1124,14 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     lym_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_lym0"][:-5] + textureextension))
                     lym_image_texture.image.colorspace_settings.name = "Non-Color"
                     material.node_tree.links.new(lym_image_texture.outputs[0], shadegroupnodes.inputs['Lym_color'])
-                    material.node_tree.links.new(lym_image_texture.outputs[1], shadegroupnodes.inputs['Lym_alpha'])
+                    if color4 != (12312312.0,12312312.0,12312312.0,1.0):
+                        material.node_tree.links.new(lym_image_texture.outputs[1], shadegroupnodes.inputs['Lym_alpha'])
                 if os.path.exists(os.path.join(filep, mat["mat_col0"][:-5] + textureextension)) == True:
                     alb_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
                     alb_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_col0"][:-5] + textureextension))
                     material.node_tree.links.new(alb_image_texture.outputs[0], shadegroupnodes.inputs['Albedo'])
                     material.node_tree.links.new(alb_image_texture.outputs[1], shadegroupnodes.inputs['AlbedoAlpha'])
-                else:
-                    shadegroupnodes.inputs['Albedo'].default_value = (mat["mat_color_r"], mat["mat_color_g"], mat["mat_color_b"], 1.0)
+                shadegroupnodes.inputs['BaseColor'].default_value = (mat["mat_color_r"], mat["mat_color_g"], mat["mat_color_b"], 1.0)
                         
                 if mat["mat_enable_highlight_map"]:
                     highlight_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")                        
@@ -2237,17 +2173,18 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                         if materials[face_mat_id_array[i]].name.split(".")[0] == sorted(mat_array)[x]:
                                             poly.material_index = x
 
-
-                                for face in new_object.data.polygons:
-                                    for vert_idx, loop_idx in zip(face.vertices, face.loop_indices):
-                                        uv_layer.data[loop_idx].uv = uv_array[vert_idx]
-                                        if len(uv2_array) > 0:
-                                            uv2_layer.data[loop_idx].uv = uv2_array[vert_idx]
-                                        if len(uv3_array) > 0:
-                                            uv3_layer.data[loop_idx].uv = uv3_array[vert_idx]
-                                        if len(uv4_array) > 0:
-                                            uv4_layer.data[loop_idx].uv = uv4_array[vert_idx]
-
+                                try:
+                                    for face in new_object.data.polygons:
+                                        for vert_idx, loop_idx in zip(face.vertices, face.loop_indices):
+                                            uv_layer.data[loop_idx].uv = uv_array[vert_idx]
+                                            if len(uv2_array) > 0:
+                                                uv2_layer.data[loop_idx].uv = uv2_array[vert_idx]
+                                            if len(uv3_array) > 0:
+                                                uv3_layer.data[loop_idx].uv = uv3_array[vert_idx]
+                                            if len(uv4_array) > 0:
+                                                uv4_layer.data[loop_idx].uv = uv4_array[vert_idx]
+                                except:
+                                    continue    
                                 #normals
                                 if blender_version[0] < 3:
                                     new_object.data.use_auto_smooth = True
