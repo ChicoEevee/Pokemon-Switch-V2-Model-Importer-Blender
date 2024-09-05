@@ -1134,10 +1134,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     alb_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_col0"][:-5] + textureextension))
                     material.node_tree.links.new(alb_image_texture.outputs[0], shadegroupnodes.inputs['Albedo'])
                     material.node_tree.links.new(alb_image_texture.outputs[1], shadegroupnodes.inputs['AlbedoAlpha'])
-                if os.path.exists(os.path.join(filep, mat["mat_mtl0"][:-5] + textureextension)) == True:
-                    alb_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
-                    alb_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_mtl0"][:-5] + textureextension))
-                    material.node_tree.links.new(alb_image_texture.outputs[0], shadegroupnodes.inputs['Metallic'])
                 if "eye" not in mat["mat_name"] and not "pm" in trmtr.name:
                     shadegroupnodes.inputs['BaseColor'].default_value = (mat["mat_color_r"], mat["mat_color_g"], mat["mat_color_b"], 1.0)
                         
@@ -1194,7 +1190,12 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                         roughness_image_texture.image.colorspace_settings.name = "Non-Color"
                     material.node_tree.links.new(roughness_image_texture.outputs[0], shadegroupnodes.inputs['Roughness'])
 
-
+                if mat["mat_enable_metallic_map"]:
+                    roughness_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
+                    if os.path.exists(os.path.join(filep, mat["mat_mtl0"][:-5] + textureextension)) == True:
+                        roughness_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_mtl0"][:-5] + textureextension))
+                        roughness_image_texture.image.colorspace_settings.name = "Non-Color"
+                    material.node_tree.links.new(roughness_image_texture.outputs[0], shadegroupnodes.inputs['Metallic'])
 
 
 
