@@ -1,8 +1,6 @@
 # Pokémon Switch V2 Blender Addon 3.3.x and WIP 4.x.x
 A Python script for Blender to import models from Pokémon Games in Nintendo Switch (VERY WIP)
 
-DOWNLOAD THE ZIP FROM THE RELEASES TAB AND INSTALL THE ADDON https://github.com/ChicoEevee/Pokemon-Switch-V2-Model-Importer-Blender/releases/download/publish/PokemonSwitchV2Blender.zip
-
 HUGE thanks to Random Talking Bush for making the original maxscript for this
 https://www.vg-resource.com/thread-29836.html
 
