@@ -33,7 +33,7 @@ import glob
 import shutil
 import sys
 import numpy as np
-
+import requests
 
 # READ THIS: change to True when running in Blender, False when running using fake-bpy-module-latest
 IN_BLENDER_ENV = True
@@ -1086,7 +1086,10 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
             addons_path = bpy.utils.user_resource('SCRIPTS')
 
             if not 'ScViShader' in bpy.data.materials or not 'ScViShader' in bpy.data.materials:
-                print('! ScViShader not loaded. Importing from source.')
+                if os.path.exists(os.path.join(addons_path,"addons/SCVIShader.blend")) == False:
+                    response = requests.get("https://raw.githubusercontent.com/ChicoEevee/Pokemon-Switch-V2-Model-Importer-Blender/master/SCVIShader.blend", stream=True)
+                    with open(os.path.join(addons_path,"addons/SCVIShader.blend"), 'wb') as file:
+                        file.write(response.content)
                 with bpy.data.libraries.load(os.path.join(addons_path,"addons/SCVIShader.blend"), link=False) as (data_from, data_to):
                     data_to.materials = data_from.materials
                     print('! Loaded shader blend file.')
