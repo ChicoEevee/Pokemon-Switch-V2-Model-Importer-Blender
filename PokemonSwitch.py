@@ -1125,7 +1125,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     alb_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_col0"][:-5] + textureextension))
                     material.node_tree.links.new(alb_image_texture.outputs[0], shadegroupnodes.inputs['Albedo'])
                     material.node_tree.links.new(alb_image_texture.outputs[1], shadegroupnodes.inputs['AlbedoAlpha'])
-                if mat['mat_shader'] = "SSS":
+                if mat['mat_shader'] == "SSS":
                     shadegroupnodes.inputs['SubsurfaceColor'].default_value = (mat["mat_ssscolor_r"], mat["mat_ssscolor_g"], mat["mat_ssscolor_b"], 1.0)
                     sss_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
                     sss_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_sssmask0"][:-5] + textureextension))
