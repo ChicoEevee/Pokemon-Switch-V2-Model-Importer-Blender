@@ -445,7 +445,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
             mat_start = ftell(trmtr) + readlong(trmtr); fseek(trmtr, mat_start)
             mat_count = readlong(trmtr)
             for x in range(mat_count):
-                mat_shader = "Standard"; mat_col0 = ""; mat_lym0 = ""; mat_nrm0 = ""; mat_ao0 = ""; mat_emi0 = ""; mat_rgh0 = ""; mat_mtl0 = ""; mat_msk0 = ""; mat_highmsk0 = ""; mat_sssmask0 = ""
+                mat_shader = ""; mat_col0 = ""; mat_lym0 = ""; mat_nrm0 = ""; mat_ao0 = ""; mat_emi0 = ""; mat_rgh0 = ""; mat_mtl0 = ""; mat_msk0 = ""; mat_highmsk0 = ""; mat_sssmask0 = ""
                 mat_uv_scale_u = 1.0; mat_uv_scale_v = 1.0; mat_uv_trs_u = 0; mat_uv_trs_v = 0
                 mat_uv_scale2_u = 1.0; mat_uv_scale2_v = 1.0; mat_uv_trs2_u = 0; mat_uv_trs2_v = 0
                 mat_color_r = 1.0; mat_color_g = 1.0; mat_color_b = 1.0
@@ -464,6 +464,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 mat_mtl_layer0 = 0.0; mat_mtl_layer1 = 0.0; mat_mtl_layer2 = 0.0; mat_mtl_layer3 = 0.0; mat_mtl_layer4 = 0.0
                 mat_reflectance = 0.0
                 mat_emm_intensity = 1.0
+                mat_sss_offset = 0.0
                 mat_offset = ftell(trmtr) + readlong(trmtr)
                 mat_ret = ftell(trmtr)
 
@@ -615,15 +616,15 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                             mat_param_c_id = 0
 
                         if mat_param_c_string == "BaseColorMap": mat_col0 = mat_param_c_value
-                        elif mat_param_c_string == "LayerMaskMap": mat_lym0 = mat_param_c_value
-                        elif mat_param_c_string == "NormalMap": mat_nrm0 = mat_param_c_value
-                        elif mat_param_c_string == "AOMap": mat_ao0 = mat_param_c_value
-                        elif mat_param_c_string == "EmissionColorMap": mat_emi0 = mat_param_c_value
-                        elif mat_param_c_string == "RoughnessMap": mat_rgh0 = mat_param_c_value
-                        elif mat_param_c_string == "MetallicMap": mat_mtl0 = mat_param_c_value
-                        elif mat_param_c_string == "DisplacementMap": mat_msk0 = mat_param_c_value
-                        elif mat_param_c_string == "HighlightMaskMap": mat_highmsk0 = mat_param_c_value
-                        elif mat_param_c_string == "SSSMaskMap": mat_sssmask0 = mat_param_c_value
+                        if mat_param_c_string == "LayerMaskMap": mat_lym0 = mat_param_c_value
+                        if mat_param_c_string == "NormalMap": mat_nrm0 = mat_param_c_value
+                        if mat_param_c_string == "AOMap": mat_ao0 = mat_param_c_value
+                        if mat_param_c_string == "EmissionColorMap": mat_emi0 = mat_param_c_value
+                        if mat_param_c_string == "RoughnessMap": mat_rgh0 = mat_param_c_value
+                        if mat_param_c_string == "MetallicMap": mat_mtl0 = mat_param_c_value
+                        if mat_param_c_string == "DisplacementMap": mat_msk0 = mat_param_c_value
+                        if mat_param_c_string == "HighlightMaskMap": mat_highmsk0 = mat_param_c_value
+                        if mat_param_c_string == "SSSMaskMap": mat_sssmask0 = mat_param_c_value
                         # -- There's also all of the following, which aren't automatically assigned to keep things simple.
                         # -- "AOMap"
                         # -- "AOMap1"
@@ -777,7 +778,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                         elif mat_param_e_string == "MetallicLayer4": mat_mtl_layer4 = mat_param_e_value
                         elif mat_param_e_string == "Reflectance": mat_reflectance = mat_param_e_value
                         elif mat_param_e_string == "EmissionIntensity": mat_emm_intensity = mat_param_e_value
-                        
+                        elif mat_param_e_string == "SSSMaskOffset": mat_sss_offset = mat_param_e_value
                         print(f"(param_e) {mat_param_e_string}: {mat_param_e_value}")
                         fseek(trmtr, mat_param_e_ret)
 
@@ -1048,6 +1049,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     "mat_mtl_layer0": mat_mtl_layer0, "mat_mtl_layer1": mat_mtl_layer1, "mat_mtl_layer2": mat_mtl_layer2, "mat_mtl_layer3": mat_mtl_layer3, "mat_mtl_layer4": mat_mtl_layer4,
                     "mat_reflectance": mat_reflectance,
                     "mat_emm_intensity": mat_emm_intensity,
+                    "mat_sss_offset": mat_sss_offset,
                     "mat_uv_scale_u": mat_uv_scale_u, "mat_uv_scale_v": mat_uv_scale_v,
                     "mat_uv_scale2_u": mat_uv_scale2_u, "mat_uv_scale2_v": mat_uv_scale2_v,
                     "mat_enable_base_color_map": mat_enable_base_color_map,
@@ -1125,12 +1127,15 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     alb_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_col0"][:-5] + textureextension))
                     material.node_tree.links.new(alb_image_texture.outputs[0], shadegroupnodes.inputs['Albedo'])
                     material.node_tree.links.new(alb_image_texture.outputs[1], shadegroupnodes.inputs['AlbedoAlpha'])
+                print(mat["mat_sssmask0"])
                 if mat['mat_shader'] == "SSS":
+                    shadegroupnodes.inputs['SSSMaskMap'].default_value = mat_sss_offset
                     shadegroupnodes.inputs['SubsurfaceColor'].default_value = (mat["mat_ssscolor_r"], mat["mat_ssscolor_g"], mat["mat_ssscolor_b"], 1.0)
-                    sss_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
-                    sss_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_sssmask0"][:-5] + textureextension))
-                    sss_image_texture.image.colorspace_settings.name = "Non-Color"
-                    material.node_tree.links.new(sss_image_texture.outputs[0], shadegroupnodes.inputs['SSSMaskMap'])
+                    if os.path.exists(os.path.join(filep, mat["mat_sssmask0"][:-5] + textureextension)) == True:
+                        sss_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
+                        sss_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_sssmask0"][:-5] + textureextension))
+                        sss_image_texture.image.colorspace_settings.name = "Non-Color"
+                        material.node_tree.links.new(sss_image_texture.outputs[0], shadegroupnodes.inputs['SSSMaskMap'])
 
                 if mat["mat_enable_highlight_map"]:
                     highlight_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")                        
