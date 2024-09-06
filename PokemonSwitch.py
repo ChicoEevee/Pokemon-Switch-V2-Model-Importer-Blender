@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Pokémon Switch V2 (.TRMDL)",
     "author": "Scarlett/SomeKitten & ElChicoEevee",
-    "version": (1, 5, 0),
+    "version": (2, 0, 0),
     "blender": (3, 3, 0),
     "location": "File > Import",
     "description": "Blender addon for import Pokémon Switch TRMDL",
@@ -289,12 +289,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
             fseek(trskl, trskl_file_start + trskl_struct_bone)
             trskl_bone_start = ftell(trskl) + readlong(trskl); fseek(trskl, trskl_bone_start)
             bone_count = readlong(trskl)
-            print(bone_count)
-            print(bone_count)
-            print(bone_count)
-            print(bone_count)
-            print(bone_count)
-            print(bone_count)
             
             if IN_BLENDER_ENV:
                 new_armature = bpy.data.armatures.new(os.path.basename(trmdl.name))
@@ -307,7 +301,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 bone_offset = ftell(trskl) + readlong(trskl)
                 bone_ret = ftell(trskl)
                 fseek(trskl, bone_offset)
-                print(f"Bone {x} start: {hex(bone_offset)}")
                 trskl_bone_struct = ftell(trskl) - readlong(trskl); fseek(trskl, trskl_bone_struct)
                 trskl_bone_struct_len = readshort(trskl)
 
@@ -350,7 +343,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     bone_merge_string_len = readlong(trskl)
                     if bone_merge_string_len != 0:
                         bone_merge_string = readfixedstring(trskl, bone_merge_string_len)
-                        print(f"BoneMerge to {bone_merge_string}")
                     else: bone_merge_string = ""
 
 
@@ -385,7 +377,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                         bone_parent = readlong(trskl) + 1
                     else:
                         bone_parent = 0
-                    print(bone_parent)
                     if trskl_bone_struct_ptr_rig_id != 0:
                         fseek(trskl, bone_offset + trskl_bone_struct_ptr_rig_id)
                         bone_rig_id = readlong(trskl) + trskl_bone_adjust
@@ -454,7 +445,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
             mat_start = ftell(trmtr) + readlong(trmtr); fseek(trmtr, mat_start)
             mat_count = readlong(trmtr)
             for x in range(mat_count):
-                mat_shader = "Standard"; mat_col0 = ""; mat_lym0 = ""; mat_nrm0 = ""; mat_ao0 = ""; mat_emi0 = ""; mat_rgh0 = ""; mat_mtl0 = ""; mat_msk0 = ""; mat_highmsk0 = ""
+                mat_shader = "Standard"; mat_col0 = ""; mat_lym0 = ""; mat_nrm0 = ""; mat_ao0 = ""; mat_emi0 = ""; mat_rgh0 = ""; mat_mtl0 = ""; mat_msk0 = ""; mat_highmsk0 = ""; mat_sssmask0 = ""
                 mat_uv_scale_u = 1.0; mat_uv_scale_v = 1.0; mat_uv_trs_u = 0; mat_uv_trs_v = 0
                 mat_uv_scale2_u = 1.0; mat_uv_scale2_v = 1.0; mat_uv_trs2_u = 0; mat_uv_trs2_v = 0
                 mat_color_r = 1.0; mat_color_g = 1.0; mat_color_b = 1.0
@@ -467,7 +458,8 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 mat_emcolor2_r = 0.0; mat_emcolor2_g = 0.0; mat_emcolor2_b = 0.0
                 mat_emcolor3_r = 0.0; mat_emcolor3_g = 0.0; mat_emcolor3_b = 0.0
                 mat_emcolor4_r = 0.0; mat_emcolor4_g = 0.0; mat_emcolor4_b = 0.0
-                mat_emcolor5_r = 0.0; mat_emcolor5_g = 0.0; mat_emcolor5_b = 0.0                
+                mat_emcolor5_r = 0.0; mat_emcolor5_g = 0.0; mat_emcolor5_b = 0.0
+                mat_ssscolor_r = 0.0; mat_ssscolor_g = 0.0; mat_ssscolor_b = 0.0
                 mat_rgh_layer0 = 1.0; mat_rgh_layer1 = 1.0; mat_rgh_layer2 = 1.0; mat_rgh_layer3 = 1.0; mat_rgh_layer4 = 1.0
                 mat_mtl_layer0 = 0.0; mat_mtl_layer1 = 0.0; mat_mtl_layer2 = 0.0; mat_mtl_layer3 = 0.0; mat_mtl_layer4 = 0.0
                 mat_reflectance = 0.0
@@ -631,7 +623,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                         elif mat_param_c_string == "MetallicMap": mat_mtl0 = mat_param_c_value
                         elif mat_param_c_string == "DisplacementMap": mat_msk0 = mat_param_c_value
                         elif mat_param_c_string == "HighlightMaskMap": mat_highmsk0 = mat_param_c_value
-
+                        elif mat_param_c_string == "SSSMaskMap": mat_sssmask0 = mat_param_c_value
                         # -- There's also all of the following, which aren't automatically assigned to keep things simple.
                         # -- "AOMap"
                         # -- "AOMap1"
@@ -900,6 +892,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                         elif mat_param_h_string == "EmissionColorLayer3": mat_emcolor3_r = mat_param_h_value1; mat_emcolor3_g = mat_param_h_value2; mat_emcolor3_b = mat_param_h_value3
                         elif mat_param_h_string == "EmissionColorLayer4": mat_emcolor4_r = mat_param_h_value1; mat_emcolor4_g = mat_param_h_value2; mat_emcolor4_b = mat_param_h_value3
                         elif mat_param_h_string == "EmissionColorLayer5": mat_emcolor5_r = mat_param_h_value1; mat_emcolor5_g = mat_param_h_value2; mat_emcolor5_b = mat_param_h_value3
+                        elif mat_param_h_string == "SubsurfaceColor":  mat_ssscolor_r = mat_param_h_value1; mat_ssscolor_g = mat_param_h_value2; mat_ssscolor_b = mat_param_h_value3
                         else: print(f"Unknown mat_param_h: {mat_param_h_string}")
 
                         print(f"(param_h) {mat_param_h_string}: {mat_param_h_value1}, {mat_param_h_value2}, {mat_param_h_value3}, {mat_param_h_value4}")
@@ -1039,6 +1032,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     "mat_mtl0": mat_mtl0,
                     "mat_msk0": mat_msk0,
                     "mat_highmsk0": mat_highmsk0,
+                    "mat_sssmask0": mat_sssmask0,
                     "mat_color_r": mat_color_r, "mat_color_g": mat_color_g, "mat_color_b": mat_color_b,
                     "mat_color1_r": mat_color1_r, "mat_color1_g": mat_color1_g, "mat_color1_b": mat_color1_b,
                     "mat_color2_r": mat_color2_r, "mat_color2_g": mat_color2_g, "mat_color2_b": mat_color2_b,
@@ -1049,6 +1043,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     "mat_emcolor3_r": mat_emcolor3_r, "mat_emcolor3_g": mat_emcolor3_g, "mat_emcolor3_b": mat_emcolor3_b,
                     "mat_emcolor4_r": mat_emcolor4_r, "mat_emcolor4_g": mat_emcolor4_g, "mat_emcolor4_b": mat_emcolor4_b,
                     "mat_emcolor5_r": mat_emcolor5_r, "mat_emcolor5_g": mat_emcolor5_g, "mat_emcolor5_b": mat_emcolor5_b,
+                    "mat_ssscolor_r": mat_ssscolor_r, "mat_ssscolor_g": mat_ssscolor_g, "mat_ssscolor_b": mat_ssscolor_b,
                     "mat_rgh_layer0": mat_rgh_layer0, "mat_rgh_layer1": mat_rgh_layer1, "mat_rgh_layer2": mat_rgh_layer2, "mat_rgh_layer3": mat_rgh_layer3, "mat_rgh_layer4": mat_rgh_layer4,
                     "mat_mtl_layer0": mat_mtl_layer0, "mat_mtl_layer1": mat_mtl_layer1, "mat_mtl_layer2": mat_mtl_layer2, "mat_mtl_layer3": mat_mtl_layer3, "mat_mtl_layer4": mat_mtl_layer4,
                     "mat_reflectance": mat_reflectance,
@@ -1075,10 +1070,12 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
             addons_path = bpy.utils.user_resource('SCRIPTS')
 
             if not 'ScViShader' in bpy.data.materials or not 'ScViShader' in bpy.data.materials:
-                if os.path.exists(os.path.join(addons_path,"addons/SCVIShader.blend")) == False:
+                try:
                     response = requests.get("https://raw.githubusercontent.com/ChicoEevee/Pokemon-Switch-V2-Model-Importer-Blender/master/SCVIShader.blend", stream=True)
                     with open(os.path.join(addons_path,"addons/SCVIShader.blend"), 'wb') as file:
                         file.write(response.content)
+                except:
+                    continue
                 with bpy.data.libraries.load(os.path.join(addons_path,"addons/SCVIShader.blend"), link=False) as (data_from, data_to):
                     data_to.materials = data_from.materials
                     print('! Loaded shader blend file.')
@@ -1087,14 +1084,19 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     material = bpy.data.materials["ScViMonEyeShader"].copy()
                 else:
                     material = bpy.data.materials["ScViShader"].copy()
+                    
                 material.name = mat["mat_name"]
                 materials.append(material)
                 shadegroupnodes = material.node_tree.nodes['Group']
-                print(mat["mat_lym0"])
+                try:
+                    shadegroupnodes.inputs['BaseColor'].default_value = (mat["mat_color_r"], mat["mat_color_g"], mat["mat_color_b"], 1.0)
+                except:
+                    continue
                 if os.path.exists(os.path.join(filep, mat["mat_lym0"][:-5] + textureextension)) == True:
                     lym_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
                     lym_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_lym0"][:-5] + textureextension))
                     lym_image_texture.image.colorspace_settings.name = "Non-Color"
+                
                 color1 = (mat["mat_color1_r"], mat["mat_color1_g"], mat["mat_color1_b"], 1.0)
                 color2 = (mat["mat_color2_r"], mat["mat_color2_g"], mat["mat_color2_b"], 1.0)
                 color3 = (mat["mat_color3_r"], mat["mat_color3_g"], mat["mat_color3_b"], 1.0)
@@ -1123,9 +1125,13 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     alb_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_col0"][:-5] + textureextension))
                     material.node_tree.links.new(alb_image_texture.outputs[0], shadegroupnodes.inputs['Albedo'])
                     material.node_tree.links.new(alb_image_texture.outputs[1], shadegroupnodes.inputs['AlbedoAlpha'])
-                if "eye" not in mat["mat_name"] and not "pm" in trmtr.name:
-                    shadegroupnodes.inputs['BaseColor'].default_value = (mat["mat_color_r"], mat["mat_color_g"], mat["mat_color_b"], 1.0)
-                        
+                if mat['mat_shader'] = "SSS":
+                    shadegroupnodes.inputs['SubsurfaceColor'].default_value = (mat["mat_ssscolor_r"], mat["mat_ssscolor_g"], mat["mat_ssscolor_b"], 1.0)
+                    sss_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
+                    sss_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_sssmask0"][:-5] + textureextension))
+                    sss_image_texture.image.colorspace_settings.name = "Non-Color"
+                    material.node_tree.links.new(sss_image_texture.outputs[0], shadegroupnodes.inputs['SSSMaskMap'])
+
                 if mat["mat_enable_highlight_map"]:
                     highlight_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")                        
                     if os.path.exists(os.path.join(filep, mat["mat_highmsk0"][:-5] + ".png")) == True:
@@ -1186,9 +1192,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                         roughness_image_texture.image.colorspace_settings.name = "Non-Color"
                     material.node_tree.links.new(roughness_image_texture.outputs[0], shadegroupnodes.inputs['Metallic'])
 
-
-
-                print(f"mat_shader = {mat['mat_shader']}")
  
 
     if loadlods == False:
@@ -1273,7 +1276,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                             poly_group_offset = ftell(trmsh) + readlong(trmsh)
                             poly_group_ret = ftell(trmsh)
                             fseek(trmsh, poly_group_offset)
-                            print(f"PolyGroup offset #{x}: {hex(poly_group_offset)}")
                             poly_group_struct = ftell(trmsh) - readlong(trmsh)
                             fseek(trmsh, poly_group_struct)
                             poly_group_struct_len = readshort(trmsh)
@@ -1369,7 +1371,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                     for z in range(mat_facepoint_count):
                                         face_mat_id_array.append(mat_id)
 
-                                    print(f"Material {mat_name}: FaceCount = {mat_facepoint_count}, FaceStart = {mat_facepoint_start}")
+                                    #print(f"Material {mat_name}: FaceCount = {mat_facepoint_count}, FaceStart = {mat_facepoint_start}")
                                     fseek(trmsh, mat_ret)
 
                             if poly_group_struct_ptr_poly_group_name != 0:
@@ -1377,7 +1379,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                 poly_group_name_offset = ftell(trmsh) + readlong(trmsh); fseek(trmsh, poly_group_name_offset)
                                 poly_group_name_len = readlong(trmsh)
                                 poly_group_name = readfixedstring(trmsh, poly_group_name_len)
-                                print(f"Building {poly_group_name}...")
                                 
                             if poly_group_struct_ptr_group_name != 0:
                                 fseek(trmsh, poly_group_offset + poly_group_struct_ptr_group_name)
@@ -1392,8 +1393,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                 vis_group_name_offset = ftell(trmsh) + readlong(trmsh); fseek(trmsh, vis_group_name_offset)
                                 vis_group_name_len = readlong(trmsh)
                                 vis_group_name = readfixedstring(trmsh, vis_group_name_len)
-                                # changed the output variable because the original seems to be a typo
-                                print(f"VisGroup: {vis_group_name}")
+                                
                             if poly_group_struct_ptr_morphname !=0:
                                 fseek(trmsh, poly_group_offset + poly_group_struct_ptr_morphname)
                                 morph_name_header_offset = ftell(trmsh) + readlong(trmsh); fseek(trmsh, morph_name_header_offset)
@@ -1501,7 +1501,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                         # -- 0x30 = 2 floats
                                         # -- 0x33 = 3 floats
                                         # -- 0x36 = 4 floats
-                                        print(f'vert_buff_param_type = {vert_buff_param_type}')
+                                        #print(f'vert_buff_param_type = {vert_buff_param_type}')
                                         if vert_buff_param_type == 0x01:
                                             if vert_buff_param_layer != 0:
                                                 raise AssertionError("Unexpected positions layer!")
@@ -1541,16 +1541,12 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                                 
                                         
                                         elif vert_buff_param_type == 0x05:
-                                            print(f'vert_buff_param_layer = {vert_buff_param_layer}')
                                             if vert_buff_param_layer == 0:
-                                                print("bufflayer0 confirmed")
                                                 if vert_buff_param_format == 0x14:
-                                                    print("vert_buff_param_format0x14 confirmed")
                                                     colors_fmt = "4BytesAsFloat"; vert_buffer_stride = vert_buffer_stride + 0x04
                                                 elif vert_buff_param_format == 0x16:
                                                     colors_fmt = "4Bytes"; vert_buffer_stride = vert_buffer_stride + 0x04
                                                 elif vert_buff_param_format == 0x36:
-                                                    print("vert_buff_param_format0x36 confirmed")
                                                     colors_fmt = "4Floats"; vert_buffer_stride = vert_buffer_stride + 0x10
                                                 else:
                                                     raise AssertionError(hex(vert_buff_param_format))
@@ -1649,7 +1645,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                             fseek(trmbf, vert_buffer_offset)
                             vert_buffer_struct = ftell(trmbf) - readlong(trmbf); fseek(trmbf, vert_buffer_struct)
                             vert_buffer_struct_len = readshort(trmbf)
-                            print(hex(vert_buffer_struct_len))
                             if vert_buffer_struct_len == 0x0008:
                                 vert_buffer_struct_section_length = readshort(trmbf)
                                 vert_buffer_struct_ptr_faces = readshort(trmbf)
@@ -1672,10 +1667,10 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                     vert_buffer_sub_offset = ftell(trmbf) + readlong(trmbf)
                                     vert_buffer_sub_ret = ftell(trmbf)
                                     fseek(trmbf, vert_buffer_sub_offset)
-                                    if y == 0:
-                                        print(f"Vertex buffer {x} header: {hex(ftell(trmbf))}")
-                                    else:
-                                        print(f"Vertex buffer {x} morph {y} header: {hex(ftell(trmbf))}")
+                                    ##if y == 0:
+                                    ##    print(f"Vertex buffer {x} header: {hex(ftell(trmbf))}")
+                                    ##else:
+                                    ##    print(f"Vertex buffer {x} morph {y} header: {hex(ftell(trmbf))}")
                                     vert_buffer_sub_struct = ftell(trmbf) - readlong(trmbf); fseek(trmbf, vert_buffer_sub_struct)
                                     vert_buffer_sub_struct_len = readshort(trmbf)
 
@@ -1689,7 +1684,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                         vert_buffer_start = ftell(trmbf) + readlong(trmbf); fseek(trmbf, vert_buffer_start)
                                         vert_buffer_byte_count = readlong(trmbf)
                                         if y == 0:
-                                            print(f"Vertex buffer {x} start: {hex(ftell(trmbf))}")
 
                                             for v in range(vert_buffer_byte_count // poly_group_array[x]["vert_buffer_stride"]):
                                                 if poly_group_array[x]["positions_fmt"] == "4HalfFloats":
@@ -1875,9 +1869,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                                     w1_array.append({"weight1": weight1, "weight2": weight2, "weight3": weight3, "weight4": weight4})
                                                     b1_array.append({"bone1": bone1, "bone2": bone2, "bone3": bone3, "bone4": bone4})
 
-                                            print(f"Vertex buffer {x} end: {hex(ftell(trmbf))}")
                                         else:
-                                            print(f"Vertex buffer {x} morph {y} start: {hex(ftell(trmbf))}")
                                             MorphVert_array = []
                                             MorphNormal_array = []
                                             for v in range(int(vert_buffer_byte_count / 0x1C)):
@@ -1895,7 +1887,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                                 tanq = readhalffloat(trmbf)
                                                 MorphVert_array.append((vx, vy, vz))
                                                 MorphNormal_array.append((nx, ny, nz))
-                                            print(f"Vertex buffer {x} morph {y} end: {hex(ftell(trmbf))}")
                                             Morphs_array.append(MorphVert_array)
                                             #TODO: Continue implementing after line 3814
                                     fseek(trmbf,vert_buffer_sub_ret)
@@ -1909,7 +1900,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                     face_buff_offset = ftell(trmbf) + readlong(trmbf)
                                     face_buff_ret = ftell(trmbf)
                                     fseek(trmbf, face_buff_offset)
-                                    print(f"Facepoint {x} header: {hex(ftell(trmbf))}")
                                     face_buff_struct = ftell(trmbf) - readlong(trmbf); fseek(trmbf, face_buff_struct)
                                     face_buff_struct_len = readshort(trmbf)
 
@@ -1922,7 +1912,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                         fseek(trmbf, face_buff_offset + face_buffer_struct_ptr)
                                         facepoint_start = ftell(trmbf) + readlong(trmbf); fseek(trmbf, facepoint_start)
                                         facepoint_byte_count = readlong(trmbf)
-                                        print(f"Facepoint {x} start: {hex(ftell(trmbf))}")
                                         
                                         if len(vert_array) > 65536: # is this a typo? I would imagine it to be 65535
                                             for v in range(facepoint_byte_count // 12):
@@ -1936,7 +1925,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                                 fb = readshort(trmbf)
                                                 fc = readshort(trmbf)
                                                 face_array.append([fa, fb, fc])
-                                        print(f"Facepoint {x} end: {hex(ftell(trmbf))}")
                                     fseek(trmbf, face_buff_ret)
 
                             if vert_buffer_struct_ptr_groups != 0:
@@ -2009,13 +1997,11 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                         group_morphsoffset = ftell(trmbf) + readlong(trmbf)
                                         fseek(trmbf, group_morphsoffset)
                                         group_morphscount = readlong(trmbf)
-                                        print(f"Group {x} header start: {group_morphsoffset}")
                                         
                                         for y in range(group_morphscount):
                                             morphgroupoffset = ftell(trmbf) + readlong(trmbf)
                                             groupret = ftell(trmbf)
                                             fseek(trmbf, morphgroupoffset)
-                                            print(f"Group morph {y} start: {ftell(trmbf)}")
                                             bufferstruct = ftell(trmbf) - readlong(trmbf)
                                             fseek(trmbf, bufferstruct)
                                             morphbufferstructlen = readshort(trmbf)
@@ -2054,13 +2040,10 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                                     if MorphVertIDs_array[v] != 0:
                                                         MorphVert_array[MorphVertIDs_array[v]] = [vert_array[MorphVertIDs_array[v]][0] + vx, vert_array[MorphVertIDs_array[v]][1] + vy, vert_array[MorphVertIDs_array[v]][2] + vz]
                                                         MorphNormal_array[MorphVertIDs_array[v]] = [vert_array[MorphVertIDs_array[v]][0] + nx, vert_array[MorphVertIDs_array[v]][1] + ny, vert_array[MorphVertIDs_array[v]][2] + nz]
-                                                print(f"Group {x} morph {y} end: {hex(ftell(trmbf))}")
                                                 Morphs_array.append(MorphVert_array)
                                             fseek(trmbf, groupret)
                                         fseek(trmbf, group_ret)
                             fseek(trmbf, vert_buffer_ret)                                                          
-
-                            print("Making object...")
 
                             for b in range(len(w1_array)):
                                 w = {"boneids": [], "weights": []}
@@ -2098,7 +2081,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                     sk_basis = new_object.shape_key_add(name='Basis')
                                     sk_basis.interpolation = 'KEY_LINEAR'
                                     new_object.data.shape_keys.use_relative = True
-                                    print(MorphName_array)
                                     for m in range(len(MorphName_array)):
                                         sk = new_object.shape_key_add(name=MorphName_array[m])
                                         for i in range(len(Morphs_array[m])):
@@ -2144,7 +2126,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                         if alpha_array[vert] == 0:
                                             alpha_array[vert] = 1
                                         color_layer.data[loop_index].color = (color_array[vert][0] / alpha_array[vert], color_array[vert][1] / alpha_array[vert], color_array[vert][2] / alpha_array[vert], alpha_array[vert])
-                                print(materials)
                                 for mat in materials:
                                     for x in range(len(mat_array)):
                                         if mat.name.split(".")[0] == sorted(mat_array)[x]:
