@@ -191,21 +191,19 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 fseek(trmdl, trmsh_name_offset)
                 trmsh_name_len = readlong(trmdl)
                 chara_check = readfixedstring(trmdl, 3); fseek(trmdl, ftell(trmdl) - 3)
-
-                if chara_check.startswith(('au_')): chara_check = "CommonNPC"
-                elif chara_check.startswith(('bu_')): chara_check = "CommonNPC"
-                elif chara_check.startswith(('cf_')): chara_check = "CommonNPC"
-                elif chara_check.startswith(('cm_')): chara_check = "CommonNPC"
-                elif chara_check.startswith(('df_')): chara_check = "CommonNPC"
-                elif chara_check.startswith(('dm_')): chara_check = "CommonNPC"
-                elif chara_check.startswith(('p1_drs')): chara_check = "SVProtag"
-                elif chara_check.startswith(('p2_drs')): chara_check = "SVProtag"
-                elif chara_check.startswith(('pm')): chara_check = "Pokemon"
-                elif chara_check.startswith(('p0')): chara_check = "SVProtag"
-                else: chara_check = "None"
-                if chara_check == "SVProtag" and trskl is None:
-                    trskl = open(os.path.join(filep, "../../model_pc_base/model/p0_base.trskl"), "rb")
                 trmsh_name = readfixedstring(trmdl, trmsh_name_len)
+
+                if trmsh_name.startswith(('au_')): chara_check = "CommonNPC"
+                elif trmsh_name.startswith(('bu_')): chara_check = "CommonNPC"
+                elif trmsh_name.startswith(('cf_')): chara_check = "CommonNPC"
+                elif trmsh_name.startswith(('cm_')): chara_check = "CommonNPC"
+                elif trmsh_name.startswith(('df_')): chara_check = "CommonNPC"
+                elif trmsh_name.startswith(('dm_')): chara_check = "CommonNPC"
+                elif trmsh_name.startswith(('p1_drs')): chara_check = "SVProtag"
+                elif trmsh_name.startswith(('p2_drs')): chara_check = "SVProtag"
+                elif trmsh_name.startswith(('pm')): chara_check = "Pokemon"
+                elif trmsh_name.startswith(('p0')): chara_check = "SVProtag"
+                else: chara_check = "None"
                 print(trmsh_name)
                 print(chara_check)
                 trmsh_lods_array.append(trmsh_name)
@@ -256,10 +254,9 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     trmtr = open(os.path.join(filep, trmtr_name), "rb") 
             fseek(trmdl, trmtr_ret)
     fclose(trmdl)
-
-    # TODO create bone_rig_array
-    # LINE 1247
-    
+    print(chara_check)
+    if chara_check == "SVProtag":
+        trskl = open(os.path.join(filep, "../../model_pc_base/model/p0_base.trskl"), "rb")
     
     if trskl is not None:
         print("Parsing TRSKL...")
@@ -438,14 +435,6 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
         fclose(trskl)
         if IN_BLENDER_ENV:
             bpy.ops.object.editmode_toggle()
-    print(bone_array)
-    print(bone_array)
-    print(bone_array)
-    print(bone_array)
-    print(bone_array)
-    print(bone_array)
-    print(bone_array)
-    print(bone_array)
     if trmtr is not None:
         print("Parsing TRMTR...")
         trmtr_file_start = readlong(trmtr)
@@ -469,9 +458,9 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 mat_uv_scale_u = 1.0; mat_uv_scale_v = 1.0; mat_uv_trs_u = 0; mat_uv_trs_v = 0
                 mat_uv_scale2_u = 1.0; mat_uv_scale2_v = 1.0; mat_uv_trs2_u = 0; mat_uv_trs2_v = 0
                 mat_color_r = 1.0; mat_color_g = 1.0; mat_color_b = 1.0
-                mat_color1_r = 0.0; mat_color1_g = 0.0; mat_color1_b = 0.0
-                mat_color2_r = 0.0; mat_color2_g = 0.0; mat_color2_b = 0.0
-                mat_color3_r = 0.0; mat_color3_g = 0.0; mat_color3_b = 0.0
+                mat_color1_r = 1.0; mat_color1_g = 1.0; mat_color1_b = 1.0
+                mat_color2_r = 1.0; mat_color2_g = 1.0; mat_color2_b = 1.0
+                mat_color3_r = 1.0; mat_color3_g = 1.0; mat_color3_b = 1.0
                 mat_color4_r = 12312312.0; mat_color4_g = 12312312.0; mat_color4_b = 12312312.0
 
                 mat_emcolor1_r = 0.0; mat_emcolor1_g = 0.0; mat_emcolor1_b = 0.0
