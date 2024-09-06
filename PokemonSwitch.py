@@ -1075,7 +1075,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     with open(os.path.join(addons_path,"addons/SCVIShader.blend"), 'wb') as file:
                         file.write(response.content)
                 except:
-                    continue
+                    print("Offline Mode")
                 with bpy.data.libraries.load(os.path.join(addons_path,"addons/SCVIShader.blend"), link=False) as (data_from, data_to):
                     data_to.materials = data_from.materials
                     print('! Loaded shader blend file.')
