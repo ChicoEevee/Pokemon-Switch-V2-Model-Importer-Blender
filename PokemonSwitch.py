@@ -1093,7 +1093,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                 try:
                     shadegroupnodes.inputs['BaseColor'].default_value = (mat["mat_color_r"], mat["mat_color_g"], mat["mat_color_b"], 1.0)
                 except:
-                    continue
+                    print("")
                 if os.path.exists(os.path.join(filep, mat["mat_lym0"][:-5] + textureextension)) == True:
                     lym_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
                     lym_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_lym0"][:-5] + textureextension))
@@ -1127,15 +1127,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                     alb_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_col0"][:-5] + textureextension))
                     material.node_tree.links.new(alb_image_texture.outputs[0], shadegroupnodes.inputs['Albedo'])
                     material.node_tree.links.new(alb_image_texture.outputs[1], shadegroupnodes.inputs['AlbedoAlpha'])
-                print(mat["mat_sssmask0"])
-                if mat['mat_shader'] == "SSS":
-                    shadegroupnodes.inputs['SSSMaskMap'].default_value = mat_sss_offset
-                    shadegroupnodes.inputs['SubsurfaceColor'].default_value = (mat["mat_ssscolor_r"], mat["mat_ssscolor_g"], mat["mat_ssscolor_b"], 1.0)
-                    if os.path.exists(os.path.join(filep, mat["mat_sssmask0"][:-5] + textureextension)) == True:
-                        sss_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")
-                        sss_image_texture.image = bpy.data.images.load(os.path.join(filep, mat["mat_sssmask0"][:-5] + textureextension))
-                        sss_image_texture.image.colorspace_settings.name = "Non-Color"
-                        material.node_tree.links.new(sss_image_texture.outputs[0], shadegroupnodes.inputs['SSSMaskMap'])
+
 
                 if mat["mat_enable_highlight_map"]:
                     highlight_image_texture = material.node_tree.nodes.new("ShaderNodeTexImage")                        
