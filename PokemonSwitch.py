@@ -392,6 +392,11 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
 
                     if IN_BLENDER_ENV:
                         new_bone = new_armature.edit_bones.new(bone_name)
+                        new_bone["trskl_trans_x"] = bone_tx
+                        new_bone["trskl_trans_y"] = bone_ty
+                        new_bone["trskl_trans_z"] = bone_tz
+                        new_bone["trskl_rot"] = (bone_rx, bone_ry, bone_rz)
+                        new_bone["trskl_scale"] = (bone_sx, bone_sy, bone_sz)
                         new_bone.use_connect = False
                         new_bone.use_inherit_rotation = True
                         if blender_version[0] == 4:
@@ -404,9 +409,9 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                             if bonestructh == True:
                                 new_bone.use_inherit_scale = False
                         
-                        new_bone.use_local_location = True
-                        new_bone.head = (0, 0, 0)
-                        new_bone.tail = (0, 0, 0.1)
+                        new_bone.use_local_location = False
+                        new_bone.head = (0,0,0 )
+                        new_bone.tail = (0, 0, 0.01)
                         new_bone.matrix = bone_matrix
 
                         if bone_parent != 0:
@@ -2165,7 +2170,7 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                                 if blender_version[0] < 3:
                                     new_object.data.use_auto_smooth = True
                                 new_object.data.normals_split_custom_set_from_vertices(normal_array)
-                                # add object to scene collection
+                                new_object.data.update()
                                 new_collection.objects.link(new_object)
 
 
