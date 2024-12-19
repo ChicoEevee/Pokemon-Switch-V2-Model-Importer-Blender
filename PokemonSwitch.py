@@ -405,8 +405,8 @@ def from_trmdlsv(filep, trmdl, rare, loadlods, bonestructh = False):
                             new_bone.use_inherit_scale = False
                         
                         new_bone.use_local_location = False
-                        new_bone.head = (0,0,0 )
-                        new_bone.tail = (0, 0, 0.01)
+                        new_bone.head = (0,0,0)
+                        new_bone.tail = (0,0,0.1)
                         new_bone.matrix = bone_matrix
 
                         if bone_parent != 0:
